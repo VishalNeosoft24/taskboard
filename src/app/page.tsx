@@ -189,17 +189,18 @@ import {
   LineChart, Line,
   XAxis, YAxis, Tooltip, ResponsiveContainer
 } from "recharts";
+import { useState } from "react";
 
 export default function DashboardPage() {
-  const { list: taskList } = useTasks();
+  const [page, setPage] = useState(1);
+  const { list: taskList } = useTasks(page, {});
   const { list: projectList } = useProjects();
-    const { list: userList } = useUsers();
-
+  const { list: userList } = useUsers();
 
   if (taskList.isLoading || projectList.isLoading)
     return <p className="p-6">Loading dashboard...</p>;
 
-  const tasks = taskList.data || [];
+  const tasks = taskList.data.results.tasks || [];
   const projects = projectList.data || [];
 
   // STATUS DATA

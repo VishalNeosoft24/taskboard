@@ -118,32 +118,48 @@ export default function ProjectDetailPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">{project.name}</h1>
-          {project.description && <p className="text-gray-600 mt-2">{project.description}</p>}
+          {project.user_role && (
+            <p className="text-gray-600 mt-2">Your Role: {project.user_role}</p>
+          )}
+          {project.description && (
+            <p className="text-gray-600 mt-2">{project.description}</p>
+          )}
         </div>
 
-        <div className="flex gap-3">
-          <button
-            onClick={openEditModal}
-            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow"
-          >
-            <Pencil size={18} /> Edit
-          </button>
+        {/* For multiple roles */}
+        {/* {["owner", "admin", "manager"].includes(project.user_role) && (
+          <div className="flex gap-3">
+            ...
+          </div>
+        )} */}
 
-          <button
-            onClick={() => setIsAddMemberOpen(true)}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:opacity-90 transition"
-          >
-            <UserPlus size={18} /> Add Member
-          </button>
+        {/* Show only for project owner */}
+        {project.user_role === "owner" && (
+          <div className="flex gap-3">
+            <button
+              onClick={openEditModal}
+              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow"
+            >
+              <Pencil size={18} /> Edit
+            </button>
 
-          <button
-            onClick={() => setIsDeleteOpen(true)}
-            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow"
-          >
-            Delete
-          </button>
-        </div>
+            <button
+              onClick={() => setIsAddMemberOpen(true)}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:opacity-90 transition"
+            >
+              <UserPlus size={18} /> Add Member
+            </button>
+
+            <button
+              onClick={() => setIsDeleteOpen(true)}
+              className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow"
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </div>
+
 
       {/* MEMBERS LIST */}
       <div className="bg-white border rounded-lg shadow p-6">
@@ -169,13 +185,14 @@ export default function ProjectDetailPage() {
                     <p><span className="font-semibold">Job Role:</span> {member.job_role}</p>
                     </div>
                 </div>
-
-                <button
-                    onClick={() => openRemoveModal(member)}
-                    className="text-red-600 font-medium hover:underline"
-                >
-                    Remove
-                </button>
+                {project.user_role === "owner" && (
+                  <button
+                      onClick={() => openRemoveModal(member)}
+                      className="text-red-600 font-medium hover:underline"
+                  >
+                      Remove
+                  </button>
+                )}
                </li>
             ))}
           </ul>

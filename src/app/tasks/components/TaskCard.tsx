@@ -1,125 +1,113 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, User, Folder, Flag, Clock } from "lucide-react";
+import { Calendar, User, Folder, Flag, Clock, CheckCircle2, Hourglass } from "lucide-react";
 
-interface TaskCardProps {
-  task: {
-    id: number;
-    name: string;
-    description?: string;
-    status: string;
-    priority?: string;
-    created_at?: string;
-    updated_at?: string;
-    due_date?: string | null;
-    user_details?: {
-      username: string;
-      first_name: string;
-      last_name: string;
-    };
-    project_details?: {
-      name: string;
-    } | null;
-  };
-}
-
-export default function TaskCard({ task }: TaskCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500/10 text-green-600 border border-green-500/20";
-      case "in-progress":
-        return "bg-blue-500/10 text-blue-600 border border-blue-500/20";
+export default function TaskCard({ task }: any) {
+  const getStatusBadge = () => {
+    switch (task.status) {
+      case "done":
+        return {
+          label: "Completed",
+          icon: <CheckCircle2 size={14} />,
+          styles: "bg-green-100 text-green-600 border-green-300"
+        };
+      case "progress":
+        return {
+          label: "In Progress",
+          icon: <Hourglass size={14} />,
+          styles: "bg-blue-100 text-blue-600 border-blue-300"
+        };
       default:
-        return "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20";
+        return {
+          label: "Todo",
+          icon: <Clock size={14} />,
+          styles: "bg-amber-100 text-amber-600 border-amber-300"
+        };
     }
   };
 
-  const getPriorityColor = (priority: string | undefined) => {
-    switch (priority) {
+  const getPriorityBadge = () => {
+    switch (task.priority) {
       case "high":
-        return "text-red-600";
+        return "text-red-600 bg-red-50 border-red-300";
       case "low":
-        return "text-green-600";
+        return "text-emerald-600 bg-emerald-50 border-emerald-300";
       default:
-        return "text-orange-600";
+        return "text-orange-600 bg-orange-50 border-orange-300";
     }
   };
+
+  const status = getStatusBadge();
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="p-5 rounded-2xl shadow-md bg-white border border-gray-200 hover:shadow-xl transition cursor-pointer"
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ duration: 0.2 }}
+      className="p-5 rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] bg-white border border-gray-100 hover:shadow-lg hover:border-gray-300 transition-all cursor-pointer group"
     >
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">{task.name}</h2>
+      {/* Title & Status */}
+      <div className="flex justify-between items-start gap-3">
+        <h2 className="text-lg font-semibold text-gray-800 line-clamp-2 group-hover:text-blue-600 transition">
+          {task.name}
+        </h2>
+
         <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-            task.status
-          )}`}
+          className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${status.styles}`}
         >
-          {task.status.replace("-", " ").toUpperCase()}
+          {status.icon} {status.label}
         </span>
       </div>
 
       {/* Description */}
       {task.description && (
-        <p className="text-gray-600 mt-2 leading-relaxed">{task.description}</p>
+        <p className="text-gray-600 mt-2 text-sm leading-relaxed line-clamp-2">
+          {task.description}
+        </p>
       )}
 
       {/* Details */}
-      <div className="mt-3 space-y-1 text-sm">
+      <div className="mt-4 space-y-2 text-sm text-gray-700">
         {task.user_details && (
-          <div className="flex items-center gap-2 text-gray-700">
-            <User size={14} />
-            <span>
-              {task.user_details.first_name} {task.user_details.last_name} (
-              {task.user_details.username})
+          <div className="flex items-center gap-2">
+            <User size={15} />
+            <span className="font-medium">
+              {task.user_details.first_name} {task.user_details.last_name}
             </span>
           </div>
         )}
 
         {task.project_details && (
-          <div className="flex items-center gap-2 text-gray-700">
-            <Folder size={14} />
+          <div className="flex items-center gap-2">
+            <Folder size={15} />
             <span>{task.project_details.name}</span>
           </div>
         )}
 
         {task.priority && (
-          <div className="flex items-center gap-2 font-semibold">
-            <Flag size={14} />
-            <span className={getPriorityColor(task.priority)}>
-              Priority: {task.priority}
-            </span>
+          <div className={`flex items-center gap-2 px-2 py-1 border rounded-md text-xs font-semibold w-fit ${getPriorityBadge()}`}>
+            <Flag size={13} /> {task.priority.toUpperCase()}
           </div>
         )}
 
         {task.due_date && (
-          <div className="flex items-center gap-2 text-gray-700">
-            <Calendar size={14} />
+          <div className="flex items-center gap-2">
+            <Calendar size={15} />
             <span>Due: {new Date(task.due_date).toLocaleDateString()}</span>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="mt-4 text-xs text-gray-400 flex items-center gap-4">
+      <div className="mt-4 flex justify-between text-xs text-gray-500">
         {task.created_at && (
           <span className="flex items-center gap-1">
-            <Clock size={12} />
-            Created: {new Date(task.created_at).toLocaleString()}
+            <Clock size={12} /> Created At: {new Date(task.created_at).toLocaleDateString()}
           </span>
         )}
-
         {task.updated_at && (
-          <span className="flex items-center gap-1">
-            <Clock size={12} />
-            Updated: {new Date(task.updated_at).toLocaleString()}
-          </span>
+          <span className="italic">Updated At: {new Date(task.updated_at).toLocaleDateString()}</span>
         )}
       </div>
     </motion.div>

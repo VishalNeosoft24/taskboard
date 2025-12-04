@@ -1,71 +1,86 @@
-// src/components/TaskDetail.tsx
 "use client";
 
-export default function TaskDetail({
-  task,
-  onStatusChange,
-  onPriorityChange,
-}: {
-  task: any;
-  onStatusChange?: (status: string) => void;
-  onPriorityChange?: (priority: string) => void;
-}) {
-  const statusColors: Record<string, string> = {
-    todo: "bg-gray-200 text-gray-800",
-    in_progress: "bg-yellow-200 text-yellow-800",
-    done: "bg-green-200 text-green-800",
-    blocked: "bg-red-200 text-red-800",
-  };
+import { Calendar, User, FolderKanban, Flag, Clock } from "lucide-react";
 
-  const priorityColors: Record<string, string> = {
-    low: "bg-blue-200 text-blue-800",
-    medium: "bg-yellow-200 text-yellow-800",
-    high: "bg-red-200 text-red-800",
-  };
+export default function TaskDetail({ task, onStatusChange, onPriorityChange }: any) {
+  const statusOptions = [
+    { value: "todo", label: "To Do", color: "bg-gray-200 text-gray-900" },
+    { value: "progress", label: "In Progress", color: "bg-blue-200 text-blue-900" },
+    { value: "done", label: "Done", color: "bg-green-200 text-green-900" },
+  ];
+
+  const priorityOptions = [
+    { value: "low", label: "Low", color: "bg-green-200 text-green-900" },
+    { value: "medium", label: "Medium", color: "bg-yellow-200 text-yellow-900" },
+    { value: "high", label: "High", color: "bg-red-200 text-red-900" },
+  ];
+
+  const getColor = (options: any[], value: string) =>
+    options.find((x) => x.value === value)?.color || "bg-gray-200 text-gray-900";
 
   return (
-    <div className="p-6 border rounded-lg shadow-md bg-white mb-6">
-      <h2 className="text-2xl font-bold text-gray-900">{task.name}</h2>
-      <p className="text-gray-700 mt-3">{task.description}</p>
+    <div className="mb-6 p-6 rounded-2xl shadow-lg border bg-gradient-to-br from-white via-gray-50 to-gray-100">
+      {/* Title */}
+      <h2 className="text-3xl font-bold text-gray-900 drop-shadow-sm">{task.name}</h2>
 
-      <div className="flex flex-wrap gap-2 mt-4 items-center">
-        {/* Status dropdown */}
+      {/* Description */}
+      {task.description && (
+        <p className="mt-3 text-gray-700 leading-relaxed">{task.description}</p>
+      )}
+
+      {/* Status + Priority */}
+      <div className="mt-5 flex gap-4 flex-wrap">
         <select
           value={task.status}
           onChange={(e) => onStatusChange?.(e.target.value)}
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[task.status] || "bg-gray-200 text-gray-800"}`}
+          className={`px-4 py-2 text-sm font-semibold rounded-full ${getColor(
+            statusOptions,
+            task.status
+          )}`}
         >
-          <option value="todo">TODO</option>
-          <option value="progress">IN PROGRESS</option>
-          <option value="done">DONE</option>
+          {statusOptions.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
         </select>
 
-        {/* Priority dropdown */}
         <select
           value={task.priority}
           onChange={(e) => onPriorityChange?.(e.target.value)}
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${priorityColors[task.priority] || "bg-gray-200 text-gray-800"}`}
+          className={`px-4 py-2 text-sm font-semibold rounded-full ${getColor(
+            priorityOptions,
+            task.priority
+          )}`}
         >
-          <option value="low">LOW</option>
-          <option value="medium">MEDIUM</option>
-          <option value="high">HIGH</option>
+          {priorityOptions.map((p) => (
+            <option key={p.value} value={p.value}>
+              {p.label}
+            </option>
+          ))}
         </select>
       </div>
 
-      <div className="mt-4 text-sm text-gray-500 space-y-1">
+      <div className="mt-6 text-sm space-y-2 text-gray-600">
         {task.user_details && (
-          <p>
-            Assigned to: <span className="font-medium">{task.user_details.username}</span> ({task.user_details.email})
+          <p className="flex items-center gap-2">
+            <User size={16} /> {task.user_details.username}
           </p>
         )}
+
         {task.project_details && (
-          <p>
-            Project: <span className="font-medium">{task.project_details.name}</span>
+          <p className="flex items-center gap-2">
+            <FolderKanban size={16} /> {task.project_details.name}
           </p>
         )}
-        <p>Created: {new Date(task.created_at).toLocaleString()}</p>
-        <p>Updated: {new Date(task.updated_at).toLocaleString()}</p>
-        {task.due_date && <p>Due: {new Date(task.due_date).toLocaleString()}</p>}
+
+        <p className="flex items-center gap-2">
+          <Clock size={16} /> Created: {new Date(task.created_at).toLocaleDateString()}
+        </p>
+
+        <p className="flex items-center gap-2">
+          <Calendar size={16} /> Updated: {new Date(task.updated_at).toLocaleDateString()}
+        </p>
       </div>
     </div>
   );

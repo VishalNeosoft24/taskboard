@@ -2,13 +2,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProjects, deleteProject } from "@/services/projectService";
 import api from "@/lib/axios";
 import { addProjectMember, removeProjectMember } from "@/services/memberService";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
-export function useProjects() {
+export function useProjects(page: number, filters: any = {}) {
   const queryClient = useQueryClient();
 
-  // 🚀 GET LIST OF PROJECTS
+  // 🚀 GET LIST OF PROJECTS 
   const list = useQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", page, filters],
     queryFn: fetchProjects,
     staleTime: 1000 * 60,
   });
@@ -17,6 +19,7 @@ export function useProjects() {
   const add = useMutation({
     mutationFn: async (data: { name: string; description?: string }) => {
       const res = await api.post("/projects/", data);
+      toast.success(res.data.message);
       return res.data;
     },
     onSuccess: () => {

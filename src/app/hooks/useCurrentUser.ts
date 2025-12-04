@@ -1,10 +1,18 @@
 // src/hooks/useCurrentUser.ts
+import { decodeToken } from "@/lib/jwt";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/users/2/";
-
 export const useCurrentUser = () => {
+  
+  // Get JWT & decode
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  const decoded = decodeToken(token);
+  const userId = decoded?.user_id;
+
+  const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/`;
+
+
   const queryClient = useQueryClient();
 
   const user = useQuery({

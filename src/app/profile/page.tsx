@@ -65,7 +65,7 @@ export default function UserProfilePage() {
           </div>
 
           <div>
-            <h1 className="text-4xl font-bold text-gray-800">My Profile</h1>
+            <h1 className="text-4xl font-bold text-gray-800">{formData.first_name} {formData.last_name}</h1>
             <p className="text-gray-500 mt-1">
               Manage your personal information and account settings
             </p>

@@ -2,12 +2,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchTasks, createTask, fetchTask, updateTask } from "@/services/taskService";
 
-export function useTasks() {
+export function useTasks(page?: number, filters: any = {}) {
   const qc = useQueryClient();
 
   // Fetch all tasks
   const list = useQuery({
-    queryKey: ["tasks"],
+    queryKey: ["tasks", page, filters],
     queryFn: fetchTasks,
     staleTime: 1000 * 60,
   });

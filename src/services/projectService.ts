@@ -8,9 +8,15 @@ export async function getProjectDetail(id: number) {
   return res.data;
 }
 
-export const fetchProjects = async () => {
-  const res = await api.get("/projects/");
-  return res.data.results ?? res.data;
+export const fetchProjects = async ({ queryKey }: any) => {
+  const [_key, page, filters] = queryKey;
+
+  const params = new URLSearchParams();
+  if (page) params.append("page", String(page));
+  if (filters.search) params.append("search", filters.search);
+
+  const res = await api.get(`/projects/?${params.toString()}`);
+  return res.data; // Must return { count, next, previous, results }
 };
 
 export const updateProject = async (id: number, data: any) => {
