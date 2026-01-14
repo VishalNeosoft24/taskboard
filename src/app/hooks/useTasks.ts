@@ -10,6 +10,7 @@ export function useTasks(page?: number, filters: any = {}) {
     queryKey: ["tasks", page, filters],
     queryFn: fetchTasks,
     staleTime: 1000 * 60,
+    keepPreviousData: true,
   });
 
   // Add new task

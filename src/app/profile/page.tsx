@@ -50,8 +50,8 @@ export default function UserProfilePage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    localStorage.removeItem("access_token");
+    document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     window.location.href = "/login";
   };
 
@@ -70,6 +70,9 @@ export default function UserProfilePage() {
               Manage your personal information and account settings
             </p>
             <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">Date of Joining: {formData.date_of_joining}</span>
+            {(user.data?.role == 'superadmin' || user.data?.role == 'staff') && (
+              <span className="px-3 py-1 bg-yellow-100 text-blue-700 text-sm rounded-full">Global Role: {user.data?.role}</span>
+            )}
           </div>
         </div>
 

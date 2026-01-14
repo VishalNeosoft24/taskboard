@@ -12,6 +12,7 @@ export const fetchTasks = async ({ queryKey }: any) => {
   const params = new URLSearchParams();
   
   if (page){
+    // console.log("Fetching tasks for page:", page);
     params.append("page", String(page));
   }
 
@@ -22,13 +23,13 @@ export const fetchTasks = async ({ queryKey }: any) => {
 
 
   const res = await api.get(`/tasks/?${params.toString()}`);
+  // console.log("Fetched tasks data:", res.data);
   return res.data;
 };
 
 // Fetch single task by ID
 export const fetchTask = async (id: number) => {
   const res = await api.get(`/tasks/${id}/`);
-  console.log(`Task ${id} API response:`, res.data);
   return res.data.task;
 };
 

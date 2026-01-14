@@ -26,12 +26,20 @@ export default function TaskDetailPage() {
     updateTaskById.mutate({ id: taskId, data: { priority } });
   };
 
+  const handleTaskUpdate = (data: any) => {
+    updateTaskById.mutate({
+      id: taskId,
+      data,
+    });
+  };
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <TaskDetail
         task={task}
         onStatusChange={handleStatusChange}
         onPriorityChange={handlePriorityChange}
+        onUpdate={handleTaskUpdate}
       />
 
       <TaskChat

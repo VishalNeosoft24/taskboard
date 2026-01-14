@@ -155,28 +155,71 @@ export default function ProjectsPage() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       
-      {/* Header */}
-      <div className="flex justify-between items-center mb-10">
+     {/* Header */}
+    <div className="mb-10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        
+        {/* Title */}
         <div>
           <h1 className="text-4xl font-bold text-gray-800">Projects</h1>
           <p className="text-gray-500 mt-1">Manage your projects</p>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder="Search Projects..."
-            value={filters.search}
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+
+          {/* Search */}
+          <div className="relative w-full sm:w-64">
+            <Search
+              className="absolute left-3 top-3 text-gray-400"
+              size={18}
+            />
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={filters.search}
+              onChange={(e) => {
+                setPage(1);
+                setFilters({ ...filters, search: e.target.value });
+              }}
+              className="w-full pl-10 pr-4 py-2 border rounded-xl shadow-sm
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Role Filter */}
+          <select
+            value={filters.role_filter || ""}
             onChange={(e) => {
               setPage(1);
-              setFilters({ ...filters, search: e.target.value });
+              setFilters({ ...filters, role_filter: e.target.value });
             }}
-            className="pl-10 pr-4 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+            className="w-full sm:w-44 px-4 py-2 border rounded-xl shadow-sm
+                      focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          >
+            <option value="">All Roles</option>
+            <option value="member">Member</option>
+            <option value="viewer">Viewer</option>
+            <option value="admin">Admin</option>
+            <option value="owner">Owner</option>
+          </select>
+
+          {/* Clear Filters */}
+          {(filters.role_filter || filters.search) && (
+            <button
+              onClick={() => {
+                setPage(1);
+                setFilters({ search: "", role_filter: "" });
+              }}
+              className="px-4 py-2 rounded-xl border transition
+                        bg-gray-100 hover:bg-gray-200 text-gray-700"
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
+    </div>
 
       {/* Add Project */}
       <form

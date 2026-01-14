@@ -1,6 +1,8 @@
 "use client";
 
-import { FC, useMemo, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
+import { useUsers } from "../app/hooks/useUsers";
+import { useDebounce } from "../app/hooks/useDebounce";
 
 interface AddMemberModalProps {
   isOpen: boolean;
@@ -17,10 +19,13 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   onAdd,
   users,
 }) => {
+  
   const [search, setSearch] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<
-    { id: number; username: string; email: string; role: string }[]
+  { id: number; username: string; email: string; role: string }[]
   >([]);
+  const debouncedSearch = useDebounce(search, 400);
+  const { list: searchUsers } = useUsers(1, debouncedSearch);
 
   useEffect(() => {
     if (isOpen) {
@@ -31,18 +36,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 
   if (!isOpen) return null;
 
-  const filteredUsers = useMemo(() => {
-    if (!search.trim()) return [];
-    return users
-      .filter(
-        (user) =>
-          user.username.toLowerCase().includes(search.toLowerCase()) ||
-          user.email.toLowerCase().includes(search.toLowerCase())
-      )
-      .filter(
-        (u) => !selectedMembers.some((m) => m.id === u.id) // avoid duplicates
-      );
-  }, [search, users, selectedMembers]);
+  const apiUsers = searchUsers?.data?.results || [];
 
   const addUserToSelection = (user: any) => {
     setSelectedMembers((prev) => [
@@ -79,22 +73,25 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
         {/* SEARCH DROPDOWN */}
         {search && (
           <div className="mt-2 bg-white border rounded-lg shadow max-h-40 overflow-y-auto">
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user: any) => (
-                <div
-                  key={user.id}
-                  className="px-4 py-2 cursor-pointer hover:bg-blue-100"
-                  onClick={() => addUserToSelection(user)}
-                >
-                  <p className="font-semibold">{user.username}</p>
-                  <p className="text-sm text-gray-600">{user.email}</p>
-                </div>
-              ))
+            {apiUsers.length > 0 ? (
+              apiUsers
+                .filter(u => !selectedMembers.some(m => m.id === u.id))
+                .map((user) => (
+                  <div
+                    key={user.id}
+                    className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                    onClick={() => addUserToSelection(user)}
+                  >
+                    <p className="font-semibold">{user.username}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
+                  </div>
+                ))
             ) : (
               <p className="px-4 py-2 text-gray-500">No users found</p>
             )}
           </div>
         )}
+
 
         {/* SELECTED MEMBERS */}
         {selectedMembers.length > 0 && (

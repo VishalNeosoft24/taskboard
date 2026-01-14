@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { loginUser } from "@/services/authService";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,12 +13,12 @@ export default function LoginPage() {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
+      localStorage.removeItem("access_token");
+      document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       const res = await loginUser({ username, password });
-
       localStorage.setItem("access_token", res.access);
       document.cookie = `access_token=${res.access}; path=/`;
 
-      alert("Login Successful");
       window.location.href = "/";
     } catch (err: any) {
       setError("Invalid credentials");

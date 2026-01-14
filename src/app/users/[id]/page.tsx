@@ -1,17 +1,17 @@
 // src/app/users/[id]/page.tsx
 "use client";
 
-import { useUsers } from "../../hooks/useUsers";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { useParams } from "next/navigation";
+import { useUserById } from "@/app/hooks/useUserById";
 
 export default function UserDetailPage() {
   const { id } = useParams();
-  const { list } = useUsers();
+  const { data, isLoading } = useUserById(id as string);
+  const user = data;
 
-  const user = list.data?.find((u: any) => u.id === Number(id));
 
-  if (list.isLoading)
+  if (isLoading)
     return (
       <div className="p-10 animate-pulse max-w-3xl mx-auto">
         <div className="h-10 w-40 bg-gray-200 rounded mb-6"></div>

@@ -9,8 +9,9 @@ export function useProjects(page: number, filters: any = {}) {
   const queryClient = useQueryClient();
 
   // 🚀 GET LIST OF PROJECTS 
+  const queryParams = { page, ...filters };
   const list = useQuery({
-    queryKey: ["projects", page, filters],
+    queryKey: ["projects", queryParams],
     queryFn: fetchProjects,
     staleTime: 1000 * 60,
   });
