@@ -7,22 +7,20 @@ import { useUserById } from "@/app/hooks/useUserById";
 
 export default function UserDetailPage() {
   const { id } = useParams();
-  const { data, isLoading } = useUserById(id as string);
+  const { data, isLoading, isError, error } = useUserById(id as string);
   const user = data;
 
 
-  if (isLoading)
+  if (isLoading) return <Skeleton />;
+
+
+  if (isError) {
     return (
-      <div className="p-10 animate-pulse max-w-3xl mx-auto">
-        <div className="h-10 w-40 bg-gray-200 rounded mb-6"></div>
-        <div className="h-40 w-full bg-gray-200 rounded-xl mb-6"></div>
-        <div className="grid grid-cols-2 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>
-          ))}
-        </div>
+      <div className="p-6 text-center text-red-600 font-semibold">
+        You don’t have permission to view this user.
       </div>
     );
+  }
 
   if (!user) return <p className="p-6 text-red-500">User not found.</p>;
 
@@ -92,5 +90,19 @@ const DetailCard = ({
         {value || <span className="text-gray-400 italic">Not provided</span>}
       </p>
     </motion.div>
+  );
+};
+
+const Skeleton = () => {
+  return (
+    <div className="p-10 animate-pulse max-w-3xl mx-auto">
+      <div className="h-10 w-40 bg-gray-200 rounded mb-6"></div>
+      <div className="h-40 w-full bg-gray-200 rounded-xl mb-6"></div>
+      <div className="grid grid-cols-2 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>
+        ))}
+      </div>
+    </div>
   );
 };
